@@ -3,13 +3,6 @@ from agilecoder.run_api import run_task
 
 
 def main():
-    try:
-        pass
-    except Exception as e:
-        print(
-            "Please run the following command to fix this error: pip install git+https://github.com/tree-sitter/tree-sitter-python.git@master"
-        )
-        raise e
     parser = argparse.ArgumentParser(description="argparse")
     parser.add_argument(
         "--config",
@@ -43,7 +36,13 @@ def main():
         help="GPT Model, choose from {'GPT_3_5_TURBO','GPT_4','GPT_4_32K', 'GPT_3_5_AZURE', 'CLAUDE', 'ANTHROPIC_CLAUDE', 'OLLAMA'}",
     )
     args = parser.parse_args()
-    print("------------------------------")
+    print("--------- arguments ------------")
+    print(f"config: {args.config}")
+    print(f"org: {args.org}")
+    print(f"task: [{args.task}]")
+    print(f"name: {args.name}")
+    print(f"max_num_sprints: {args.max_num_sprints}")
+    print(f"model: {args.model}")
     run_task(args)
 
 
