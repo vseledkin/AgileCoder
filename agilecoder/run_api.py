@@ -4,12 +4,14 @@ import sys
 
 from agilecoder.camel.typing import ModelType
 
-root = os.path.dirname(__file__)
-sys.path.append(root)
 
 from agilecoder.components.chat_chain import ChatChain
 from agilecoder.online_log.app import send_online_log
 from dotenv import load_dotenv
+
+root = os.path.dirname(__file__)
+sys.path.append(root)
+
 load_dotenv()
 
 
@@ -29,6 +31,7 @@ class BufferHandler(logging.Handler):
     def emit(self, record):
         self.buffer.append(self.format(record))
 
+
 def get_config(company):
     """
     return configuration json files for ChatChain
@@ -42,11 +45,7 @@ def get_config(company):
     config_dir = os.path.join(root, "CompanyConfig", company)
     default_config_dir = os.path.join(root, "CompanyConfig", "Agile")
 
-    config_files = [
-        "ChatChainConfig.json",
-        "PhaseConfig.json",
-        "RoleConfig.json"
-    ]
+    config_files = ["ChatChainConfig.json", "PhaseConfig.json", "RoleConfig.json"]
 
     config_paths = []
 
@@ -61,6 +60,7 @@ def get_config(company):
 
     return tuple(config_paths)
 
+
 def run_task(args):
     # Start AgileCoder
 
@@ -71,26 +71,44 @@ def run_task(args):
 
     home_path = os.path.expanduser("~")
     warehouse_path = os.path.join(home_path, "AgileCoder", "WareHouse")
-    os.makedirs(warehouse_path, exist_ok = True)
-    args2type = {'GPT_3_5_TURBO': ModelType.GPT_3_5_TURBO, 'GPT_4': ModelType.GPT_4, 'GPT_4_32K': ModelType.GPT_4_32k, 'GPT_3_5_AZURE': ModelType.GPT_3_5_AZURE, 'CLAUDE': ModelType.CLAUDE, 'ANTHROPIC_CLAUDE': ModelType.ANTHROPIC_CLAUDE, 'OLLAMA': ModelType.OLLAMA}
-    chat_chain = ChatChain(args.max_num_sprints,
-                        config_path=config_path,
-                        config_phase_path=config_phase_path,
-                        config_role_path=config_role_path,
-                        task_prompt=args.task,
-                        project_name=args.name,
-                        org_name=args.org,
-                        model_type=args2type[args.model])
+    os.makedirs(warehouse_path, exist_ok=True)
+    args2type = {
+        "GPT_3_5_TURBO": ModelType.GPT_3_5_TURBO,
+        "GPT_4": ModelType.GPT_4,
+        "GPT_4_32K": ModelType.GPT_4_32k,
+        "GPT_3_5_AZURE": ModelType.GPT_3_5_AZURE,
+        "CLAUDE": ModelType.CLAUDE,
+        "ANTHROPIC_CLAUDE": ModelType.ANTHROPIC_CLAUDE,
+        "OLLAMA": ModelType.OLLAMA,
+        "gpt-4o-mini": ModelType.GPT_4o_MINI,
+    }
+    chat_chain = ChatChain(
+        args.max_num_sprints,
+        config_path=config_path,
+        config_phase_path=config_phase_path,
+        config_role_path=config_role_path,
+        task_prompt=args.task,
+        project_name=args.name,
+        org_name=args.org,
+        model_type=args2type[args.model],
+    )
 
     # ----------------------------------------
     #          Init Log
     # ----------------------------------------
-    logging.basicConfig(filename=chat_chain.log_filepath, level=logging.INFO,
-                        format='[%(asctime)s %(levelname)s] %(message)s',
-                        datefmt='%Y-%d-%m %H:%M:%S', encoding="utf-8")
-    buffer_handler = BufferHandler(level=logging.INFO,
-                        format='[%(asctime)s %(levelname)s] %(message)s',
-                        datefmt='%Y-%d-%m %H:%M:%S', encoding="utf-8")
+    logging.basicConfig(
+        filename=chat_chain.log_filepath,
+        level=logging.INFO,
+        format="[%(asctime)s %(levelname)s] %(message)s",
+        datefmt="%Y-%d-%m %H:%M:%S",
+        encoding="utf-8",
+    )
+    buffer_handler = BufferHandler(
+        level=logging.INFO,
+        format="[%(asctime)s %(levelname)s] %(message)s",
+        datefmt="%Y-%d-%m %H:%M:%S",
+        encoding="utf-8",
+    )
     buffer_handler.setLevel(logging.INFO)  # Set the handler level to DEBUG
     # logger.addHandler(buffer_handler)
     logging.root.addHandler(buffer_handler)
@@ -119,4 +137,4 @@ def run_task(args):
 
     chat_chain.post_processing()
     send_online_log("<FINISH>")
-    return chat_chain.chat_env.env_dict['directory']
+    return chat_chain.chat_env.env_dict["directory"]

@@ -46,12 +46,13 @@ class RoleType(Enum):
 class ModelType(Enum):
     GPT_3_5_TURBO = "gpt-3.5-turbo-16k-0613"
     GPT_4 = "gpt-4"
+    GPT_4o_MINI = "gpt-4o-mini"
     GPT_4_32k = "gpt-4-32k"
     STUB = "stub"
     GPT_3_5_AZURE = "gpt-3.5-turbo"
-    CLAUDE = 'claude'
-    ANTHROPIC_CLAUDE = 'Authropic_Claude'
-    OLLAMA = 'ollama'
+    CLAUDE = "claude"
+    ANTHROPIC_CLAUDE = "Authropic_Claude"
+    OLLAMA = "ollama"
 
     @property
     def value_for_tiktoken(self):

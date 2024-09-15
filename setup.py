@@ -1,21 +1,23 @@
 from setuptools import setup, find_packages
-setup(name='agilecoder',
-version='0.2.0',
-description='AgileCoder',
-url='https://github.com/FSoft-AI4Code/AgileCoder',
-author='FSoft-AI4Code',
-author_email='support.aic@fpt.com',
-license='Apache-2.0',
-python_requires=">=3.8",
-include_package_data=True,
-package_data={"agilecoder": ["CompanyConfig/*/*.json"]},
-entry_points={
-        'console_scripts': ['agilecoder=agilecoder:main'],
-},
-install_requires=[
-        "openai==0.28.1",
-        "tiktoken==0.6.0",
-        "markdown==3.5.2",
+
+setup(
+    name="agilecoder",
+    version="0.2.0",
+    description="AgileCoder",
+    url="https://github.com/FSoft-AI4Code/AgileCoder",
+    author="FSoft-AI4Code",
+    author_email="support.aic@fpt.com",
+    license="Apache-2.0",
+    python_requires=">=3.8",
+    include_package_data=True,
+    package_data={"agilecoder": ["CompanyConfig/*/*.json"]},
+    entry_points={
+        "console_scripts": ["agilecoder=agilecoder:main"],
+    },
+    install_requires=[
+        "openai==1.45.0",
+        "tiktoken==0.7.0",
+        "markdown==3.7",
         "colorama",
         "nltk==3.8.1",
         "flask",
@@ -28,7 +30,8 @@ install_requires=[
         "anthropic",
         "pygame",
         "numpy",
-        "tree-sitter"
-      ],
-packages=find_packages(),
-zip_safe=False)
+        "tree-sitter",
+    ],
+    packages=find_packages(),
+    zip_safe=False,
+)

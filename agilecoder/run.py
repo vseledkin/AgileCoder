@@ -18,14 +18,17 @@ import sys
 
 from agilecoder.camel.typing import ModelType
 
+from agilecoder.components.chat_chain import ChatChain
+from dotenv import load_dotenv
+
 root = os.path.dirname(__file__)
 sys.path.append(root)
 
-from agilecoder.components.chat_chain import ChatChain
-from dotenv import load_dotenv
+
 current_dir = os.getcwd()
-env_path = os.path.join(current_dir, '.env')
+env_path = os.path.join(current_dir, ".env")
 load_dotenv(env_path)
+
 
 class BufferHandler(logging.Handler):
     def __init__(self, level=logging.NOTSET, format=None, datefmt=None, encoding=None):
@@ -42,6 +45,8 @@ class BufferHandler(logging.Handler):
 
     def emit(self, record):
         self.buffer.append(self.format(record))
+
+
 def get_config(company):
     """
     return configuration json files for ChatChain
@@ -55,11 +60,7 @@ def get_config(company):
     config_dir = os.path.join(root, "CompanyConfig", company)
     default_config_dir = os.path.join(root, "CompanyConfig", "Agile")
 
-    config_files = [
-        "ChatChainConfig.json",
-        "PhaseConfig.json",
-        "RoleConfig.json"
-    ]
+    config_files = ["ChatChainConfig.json", "PhaseConfig.json", "RoleConfig.json"]
 
     config_paths = []
 
@@ -75,17 +76,37 @@ def get_config(company):
     return tuple(config_paths)
 
 
-parser = argparse.ArgumentParser(description='argparse')
-parser.add_argument('--config', type=str, default="Agile",
-                    help="Name of config, which is used to load configuration under CompanyConfig/")
-parser.add_argument('--org', type=str, default="DefaultOrganization",
-                    help="Name of organization, your software will be generated in WareHouse/name_org_timestamp")
-parser.add_argument('--task', type=str, default="Develop a basic Gomoku game.",
-                    help="Prompt of software")
-parser.add_argument('--name', type=str, default="Gomoku",
-                    help="Name of software, your software will be generated in WareHouse/name_org_timestamp")
-parser.add_argument('--model', type=str, default="GPT_3_5_AZURE",
-                    help="GPT Model, choose from {'GPT_3_5_TURBO','GPT_4','GPT_4_32K', 'GPT_3_5_AZURE'}")
+parser = argparse.ArgumentParser(description="argparse")
+parser.add_argument(
+    "--config",
+    type=str,
+    default="Agile",
+    help="Name of config, which is used to load configuration under CompanyConfig/",
+)
+parser.add_argument(
+    "--org",
+    type=str,
+    default="DefaultOrganization",
+    help="Name of organization, your software will be generated in WareHouse/name_org_timestamp",
+)
+parser.add_argument(
+    "--task",
+    type=str,
+    default="Develop a basic Gomoku game.",
+    help="Prompt of software",
+)
+parser.add_argument(
+    "--name",
+    type=str,
+    default="Gomoku",
+    help="Name of software, your software will be generated in WareHouse/name_org_timestamp",
+)
+parser.add_argument(
+    "--model",
+    type=str,
+    default="GPT_3_5_AZURE",
+    help="GPT Model, choose from {'GPT_3_5_TURBO','GPT_4','GPT_4_32K', 'GPT_3_5_AZURE'}",
+)
 args = parser.parse_args()
 
 # Start AgileCoder
@@ -94,25 +115,39 @@ args = parser.parse_args()
 #          Init ChatChain
 # ----------------------------------------
 config_path, config_phase_path, config_role_path = get_config(args.config)
-os.makedirs('WareHouse', exist_ok = True)
-args2type = {'GPT_3_5_TURBO': ModelType.GPT_3_5_TURBO, 'GPT_4': ModelType.GPT_4, 'GPT_4_32K': ModelType.GPT_4_32k, 'GPT_3_5_AZURE': ModelType.GPT_3_5_AZURE}
-chat_chain = ChatChain(config_path=config_path,
-                       config_phase_path=config_phase_path,
-                       config_role_path=config_role_path,
-                       task_prompt=args.task,
-                       project_name=args.name,
-                       org_name=args.org,
-                       model_type=args2type[args.model])
+os.makedirs("WareHouse", exist_ok=True)
+args2type = {
+    "GPT_3_5_TURBO": ModelType.GPT_3_5_TURBO,
+    "GPT_4": ModelType.GPT_4,
+    "GPT_4_32K": ModelType.GPT_4_32k,
+    "GPT_3_5_AZURE": ModelType.GPT_3_5_AZURE,
+}
+chat_chain = ChatChain(
+    config_path=config_path,
+    config_phase_path=config_phase_path,
+    config_role_path=config_role_path,
+    task_prompt=args.task,
+    project_name=args.name,
+    org_name=args.org,
+    model_type=args2type[args.model],
+)
 
 # ----------------------------------------
 #          Init Log
 # ----------------------------------------
-logging.basicConfig(filename=chat_chain.log_filepath, level=logging.INFO,
-                    format='[%(asctime)s %(levelname)s] %(message)s',
-                    datefmt='%Y-%d-%m %H:%M:%S', encoding="utf-8")
-buffer_handler = BufferHandler(level=logging.INFO,
-                    format='[%(asctime)s %(levelname)s] %(message)s',
-                    datefmt='%Y-%d-%m %H:%M:%S', encoding="utf-8")
+logging.basicConfig(
+    filename=chat_chain.log_filepath,
+    level=logging.INFO,
+    format="[%(asctime)s %(levelname)s] %(message)s",
+    datefmt="%Y-%d-%m %H:%M:%S",
+    encoding="utf-8",
+)
+buffer_handler = BufferHandler(
+    level=logging.INFO,
+    format="[%(asctime)s %(levelname)s] %(message)s",
+    datefmt="%Y-%d-%m %H:%M:%S",
+    encoding="utf-8",
+)
 buffer_handler.setLevel(logging.INFO)  # Set the handler level to DEBUG
 # logger.addHandler(buffer_handler)
 logging.root.addHandler(buffer_handler)
